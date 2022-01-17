@@ -1,0 +1,11 @@
+{
+    "name": "youtube-party",
+    "version": "0.0.1",
+    "private": true,
+    "scripts": {
+        "start:dev": "yarn workspace server start:dev & yarn workspace client start:dev"
+    },
+    "workspaces": [
+        "packages/*"
+    ]
+}
