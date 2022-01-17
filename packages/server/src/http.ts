@@ -4,7 +4,7 @@ import { roomManager } from "./room";
 
 /**
  * Register the HTTP API routes with the provided Fastify instance.
- * @param fastify - Fastify instance
+ * @param fastify - Fastify instance.
  * @param _ - Plugin options. Do not provide any.
  */
 export async function FastifyHttp(fastify: FastifyInstance, _: FastifyPluginOptions): Promise<void> {

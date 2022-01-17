@@ -1,6 +1,11 @@
 import { RoomState, WsApi } from "common";
 import { WebSocket } from "ws";
 
+/**
+ * A room is where all clients of a party assemble.
+ * Essentially a "party room" with its own independent
+ * state from other rooms.
+ */
 class Room {
     private clients: { [uId: string]: WebSocket } = {};
 
@@ -12,6 +17,10 @@ class Room {
         };
     }
 
+    /**
+     * @param ws The client's associated socket.
+     * @param _ Username of the client to add.
+     */
     public addClient(ws: WebSocket, _: string): void {
         const uId = this.generateUId();
         this.clients[uId] = ws;
@@ -62,6 +71,7 @@ class RoomManager {
     private rooms: { [roomId: string]: any } = {};
 
     /**
+     * @param videoId The room's first video's ID.
      * @returns A reference to the newly created Room object. */
     public createRoom(videoId: string): Room {
         const roomId = this.generateRoomId();
@@ -79,6 +89,11 @@ class RoomManager {
         return this.rooms[roomId];
     }
 
+    /**
+     * The provided socket will be first authenticated, and then
+     * added to the room which it requests to join.
+     * @param ws Socket to handle.
+     */
     public handleNewWsConnection(ws: WebSocket): void {
         // Expect an authentication packet from the client
         // Disconnect if not
