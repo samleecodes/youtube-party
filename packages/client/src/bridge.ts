@@ -7,25 +7,25 @@ import { wsClient } from "./lib/ws";
 export const [roomIdUi, setRoomIdUi] = createSignal<string>("");
 export const [showPlayer, setShowPlayer] = createSignal<boolean>(false);
 
-function onPlayerReady() {
+function onPlayerReady(): void {
     if (wsClient.getState().isPlaying) {
         youTubePlayer.playVideo();
     }
 }
 
-function onPlayerStateUpdate(event: YT.PlayerStateChangeEvent) {
+function onPlayerStateUpdate(event: YT.PlayerStateChangeEvent): void {
     console.log("onPlayerStateUpdate", event.data, youTubePlayer.getCurrentTime());
 }
 
-function onConnect() {
+function onConnect(): void {
     youTubePlayer.initialise(wsClient.getState().videoId, onPlayerReady, onPlayerStateUpdate);
 }
 
-function onClose() {
+function onClose(): void {
     // window.location.reload();
 }
 
-export async function createRoom() {
+export async function createRoom(): Promise<void> {
     const roomId = await httpApiClient.createRoom();
 
     setRoomIdUi(roomId);
@@ -34,9 +34,13 @@ export async function createRoom() {
     wsClient.connect(roomId, onConnect, onClose);
 }
 
-export async function joinRoom(roomId: string) {
+export async function joinRoom(roomId: string): Promise<void> {
     setRoomIdUi(roomId);
     setShowPlayer(true);
 
     wsClient.connect(roomId, onConnect, onClose);
+}
+
+export function getPlaybackProgress(): number {
+    return youTubePlayer.getCurrentTime();
 }

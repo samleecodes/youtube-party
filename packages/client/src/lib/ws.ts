@@ -1,4 +1,5 @@
 import { RoomState, WsApi } from "common";
+import { youTubePlayer } from "./player";
 
 class WsClient {
     private ws: WebSocket | undefined;
@@ -46,6 +47,7 @@ class WsClient {
     }
 
     private onServerRequestUpdate(): void {
+        this.state.playbackProgress = youTubePlayer.getCurrentTime();
         const stateRequestReply: WsApi.StateUpdatePacket = {
             state: this.state,
             updateRequest: false,
