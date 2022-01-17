@@ -3,8 +3,13 @@ import solidPlugin from "vite-plugin-solid";
 
 export default defineConfig({
     plugins: [solidPlugin()],
+    optimizeDeps: {
+        include: ["common"],
+    },
     build: {
-        target: "esnext",
-        polyfillDynamicImport: false,
+        commonjsOptions: {
+            include: [],
+            exclude: ["commons"],
+        },
     },
 });

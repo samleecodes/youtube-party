@@ -2,8 +2,10 @@
     "name": "common",
     "version": "0.0.1",
     "private": true,
-    "main": "./src/index.ts",
+    "main": "build/index.js",
+    "types": "build/index.d.ts",
     "scripts": {
+        "build": "tsc",
         "lint": "gts lint",
         "fix": "gts fix"
     },
