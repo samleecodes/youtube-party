@@ -51,7 +51,12 @@ class WsClient {
         this.localPlaybackProgress = progress;
     }
 
-    private onServerRequestUpdate(): void {
+    public setIsPlaying(isPlaying: boolean): void {
+        this.state.isPlaying = isPlaying;
+        this.updateStateToServer();
+    }
+
+    private updateStateToServer(): void {
         this.state.playbackProgress = this.localPlaybackProgress;
         const stateRequestReply: WsApi.StateUpdatePacket = {
             state: this.state,
@@ -91,7 +96,7 @@ class WsClient {
         const stateUpdate: WsApi.StateUpdatePacket = JSON.parse(event.data);
 
         if (stateUpdate.updateRequest) {
-            this.onServerRequestUpdate();
+            this.updateStateToServer();
             return;
         }
 

@@ -9,7 +9,6 @@ export const [roomIdUi, setRoomIdUi] = createSignal<string>("");
 export const [showPlayer, setShowPlayer] = createSignal<boolean>(false);
 
 function onPlayerReady(): void {
-    console.log("onPlayeReady", wsClient.getState().playbackProgress);
     youTubePlayer.seekTo(wsClient.getState().playbackProgress);
     if (wsClient.getState().isPlaying) {
         youTubePlayer.playVideo();
@@ -17,7 +16,13 @@ function onPlayerReady(): void {
 }
 
 function onPlayerStateUpdate(event: YT.PlayerStateChangeEvent): void {
-    console.log("onPlayerStateUpdate", event.data, youTubePlayer.getCurrentTime());
+    if (event.data == 0 || event.data == 2) {
+        wsClient.setIsPlaying(false);
+    }
+
+    if (event.data == 1) {
+        wsClient.setIsPlaying(true);
+    }
 }
 
 function onPlayerPlaybackProgressUpdate(playbackProgress: number): void {
