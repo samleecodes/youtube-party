@@ -52,7 +52,7 @@ class Room {
         });
 
         if (uIds.length < 1) {
-            this.broadcastState();
+            this.broadcastState([]);
             return;
         }
 
@@ -64,23 +64,25 @@ class Room {
         ws.send(JSON.stringify(stateUpdate));
     }
 
-    private broadcastState(): void {
+    private broadcastState(exceptUIds: string[]): void {
         const stateUpdate: WsApi.StateUpdatePacket = {
             state: this.state,
             updateRequest: false,
         };
         const payload = JSON.stringify(stateUpdate);
 
-        const uIds = Object.keys(this.clients);
+        const uIds = Object.keys(this.clients).filter(val => {
+            return !exceptUIds.includes(val);
+        });
         for (let i = 0; i < uIds.length; i++) {
             this.clients[uIds[i]].send(payload);
         }
     }
 
-    private onWsMessage(_: string, data: RawData): void {
+    private onWsMessage(uId: string, data: RawData): void {
         const stateUpdate: WsApi.StateUpdatePacket = JSON.parse(String(data));
         this.state = stateUpdate.state;
-        this.broadcastState();
+        this.broadcastState([uId]);
     }
 
     private onWsClose(uId: string): void {

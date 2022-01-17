@@ -5,6 +5,7 @@ import { youTubePlayer } from "./lib/player";
 import { wsClient } from "./lib/ws";
 
 // Reactive state variables for UI rendering use only
+export const [lastDesyncUi, setLastDesyncUi] = createSignal<string>("0ms");
 export const [roomIdUi, setRoomIdUi] = createSignal<string>("");
 export const [showPlayer, setShowPlayer] = createSignal<boolean>(false);
 
@@ -39,8 +40,12 @@ function onConnect(): void {
 }
 
 function onStateUpdate(): void {
-    youTubePlayer.seekTo(wsClient.getState().playbackProgress);
     if (wsClient.getState().isPlaying) {
+        const desync = Math.abs(youTubePlayer.getCurrentTime() - wsClient.getState().playbackProgress);
+        setLastDesyncUi(`${desync}ms`);
+        if (desync > 1) {
+            youTubePlayer.seekTo(wsClient.getState().playbackProgress);
+        }
         youTubePlayer.playVideo();
     } else {
         youTubePlayer.pauseVideo();
