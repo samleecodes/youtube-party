@@ -21,6 +21,8 @@ declare global {
 
     interface ImportMetaEnv {
         readonly VITE_PLAYER_DIV_ID: string;
+        readonly VITE_HTTP_BASE_URL: string;
+        readonly VITE_WS_BASE_URL: string;
     }
 
     interface ImportMeta {

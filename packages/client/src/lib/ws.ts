@@ -12,7 +12,7 @@ class WsClient {
     private hasHandshaken = false;
     private isConnected = false;
 
-    private baseUrl = "ws://localhost:8080";
+    private baseUrl = import.meta.env.VITE_WS_BASE_URL || "ws://localhost:8080";
 
     private onConnectCallback: (() => void) | undefined;
 

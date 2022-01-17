@@ -2,7 +2,7 @@ import axios from "axios";
 import { HttpApi } from "common";
 
 class HttpApiClient {
-    private baseUrl = "http://localhost:8080";
+    private baseUrl = import.meta.env.VITE_HTTP_BASE_URL || "http://localhost:8080";
 
     public async createRoom(): Promise<string> {
         const url = this.constructUrl(HttpApi.CreateRoom.route);
