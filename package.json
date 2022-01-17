@@ -3,7 +3,9 @@
     "version": "0.0.1",
     "private": true,
     "scripts": {
-        "start:dev": "yarn workspace server start:dev & yarn workspace client start:dev"
+        "start": "yarn workspace server start",
+        "start:dev": "yarn workspace server start:dev & yarn workspace client start:dev",
+        "build": "yarn workspace server build"
     },
     "workspaces": [
         "packages/*"
