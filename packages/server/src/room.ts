@@ -84,7 +84,7 @@ class Room {
     }
 
     private onWsClose(uId: string): void {
-        if (this.clients[uId]) {
+        if (this.clients.hasOwnProperty(uId)) {
             delete this.clients[uId];
         }
     }

@@ -1,10 +1,11 @@
 class YouTubePlayer {
-    private _player: YT.Player | undefined;
+    private player: YT.Player | undefined;
 
     public initialise(
         videoId: string,
         onReady: () => void,
-        onStateChange: (event: YT.PlayerStateChangeEvent) => void
+        onStateChange: (event: YT.PlayerStateChangeEvent) => void,
+        onPlayerPlaybackProgressUpdate: (playbackProgress: number) => void
     ): void {
         // This section was pulled from YouTube docs
         const tag = document.createElement("script");
@@ -17,7 +18,7 @@ class YouTubePlayer {
 
         window.onYouTubeIframeAPIReady = () => {
             const elId = import.meta.env.VITE_PLAYER_DIV_ID;
-            this._player = new YT.Player(elId, {
+            this.player = new YT.Player(elId, {
                 videoId,
                 playerVars: {
                     playsinline: 1,
@@ -29,14 +30,31 @@ class YouTubePlayer {
                 },
             });
         };
+
+        requestAnimationFrame(() => {
+            this.renderLoop(onPlayerPlaybackProgressUpdate);
+        });
     }
 
     public getCurrentTime(): number {
-        return this._player?.getCurrentTime() || 0;
+        return this.player?.getCurrentTime() || 0;
     }
 
     public playVideo(): void {
-        this._player?.playVideo();
+        this.player?.playVideo();
+    }
+
+    public seekTo(seconds: number) {
+        this.player?.seekTo(seconds, true);
+    }
+
+    private renderLoop(onPlayerPlaybackProgressUpdate: (playbackProgress: number) => void): void {
+        try {
+            onPlayerPlaybackProgressUpdate(this.getCurrentTime());
+        } catch {}
+        requestAnimationFrame(() => {
+            this.renderLoop(onPlayerPlaybackProgressUpdate);
+        });
     }
 }
 
