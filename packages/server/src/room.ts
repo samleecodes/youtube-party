@@ -1,5 +1,5 @@
 import { RoomState, WsApi } from "common";
-import { WebSocket } from "ws";
+import { MessageEvent, RawData, WebSocket } from "ws";
 
 /**
  * A room is where all clients of a party assemble.
@@ -15,6 +15,7 @@ class Room {
         this.state = {
             videoId,
             isPlaying: true,
+            playbackProgress: 0,
         };
     }
 
@@ -26,6 +27,11 @@ class Room {
         const uId = this.generateUId();
         this.clients[uId] = ws;
 
+        ws.on("message", data => {
+            this.onWsMessage(uId, data);
+            // this.broadcastState();
+        });
+
         ws.on("close", () => {
             this.onWsClose(uId);
         });
@@ -36,12 +42,32 @@ class Room {
 
         ws.send(JSON.stringify(handshake));
 
-        this.broadcastState();
+        this.getUpdatedState([uId]);
+        // this.broadcastState();
+    }
+
+    private getUpdatedState(exceptUIds: string[]): void {
+        const uIds = Object.keys(this.clients).filter(val => {
+            return !exceptUIds.includes(val);
+        });
+
+        if (uIds.length < 1) {
+            this.broadcastState();
+            return;
+        }
+
+        const ws = this.clients[uIds[0]];
+        const stateUpdate: WsApi.StateUpdatePacket = {
+            state: this.state,
+            updateRequest: true,
+        };
+        ws.send(JSON.stringify(stateUpdate));
     }
 
     private broadcastState(): void {
         const stateUpdate: WsApi.StateUpdatePacket = {
             state: this.state,
+            updateRequest: false,
         };
         const payload = JSON.stringify(stateUpdate);
 
@@ -49,6 +75,12 @@ class Room {
         for (let i = 0; i < uIds.length; i++) {
             this.clients[uIds[i]].send(payload);
         }
+    }
+
+    private onWsMessage(_: string, data: RawData): void {
+        const stateUpdate: WsApi.StateUpdatePacket = JSON.parse(String(data));
+        this.state = stateUpdate.state;
+        this.broadcastState();
     }
 
     private onWsClose(uId: string): void {
@@ -98,8 +130,8 @@ class RoomManager {
     public handleNewWsConnection(ws: WebSocket): void {
         // Expect an authentication packet from the client
         // Disconnect if not
-        ws.on("message", data => {
-            const auth: WsApi.AuthPacket = JSON.parse(String(data));
+        const onMessage = (event: MessageEvent) => {
+            const auth: WsApi.AuthPacket = JSON.parse(String(event.data));
 
             // Perform validation on auth packet
             if (!auth.roomId || !auth.username) {
@@ -111,10 +143,12 @@ class RoomManager {
             try {
                 const room = this.getRoom(auth.roomId);
                 room.addClient(ws, auth.username);
+                ws.removeEventListener("message", onMessage);
             } catch {
                 ws.close();
             }
-        });
+        };
+        ws.addEventListener("message", onMessage);
     }
 
     /** This algorithm incorporates the current date and time as well as a

@@ -5,6 +5,8 @@ class WsClient {
 
     private state: RoomState = {
         videoId: "",
+        isPlaying: false,
+        playbackProgress: 0,
     };
 
     private roomId: string | undefined;
@@ -33,13 +35,22 @@ class WsClient {
             this.onWsMessage(event);
         });
 
-        this.ws.addEventListener("close", () => {
+        this.ws.addEventListener("close", event => {
+            console.log(event);
             this.onWsClose();
         });
     }
 
     public getState(): RoomState {
         return this.state;
+    }
+
+    private onServerRequestUpdate(): void {
+        const stateRequestReply: WsApi.StateUpdatePacket = {
+            state: this.state,
+            updateRequest: false,
+        };
+        this.ws?.send(JSON.stringify(stateRequestReply));
     }
 
     private onWsOpen(): void {
@@ -71,6 +82,12 @@ class WsClient {
         }
 
         const stateUpdate: WsApi.StateUpdatePacket = JSON.parse(event.data);
+
+        if (stateUpdate.updateRequest) {
+            this.onServerRequestUpdate();
+            return;
+        }
+
         if (stateUpdate.state) {
             this.state = stateUpdate.state;
         }

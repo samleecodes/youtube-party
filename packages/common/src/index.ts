@@ -1,6 +1,7 @@
 export interface RoomState {
     videoId: string;
     isPlaying: boolean;
+    playbackProgress: number;
 }
 
 export namespace HttpApi {
@@ -29,5 +30,6 @@ export namespace WsApi {
 
     export interface StateUpdatePacket {
         state: RoomState;
+        updateRequest: boolean;
     }
 }

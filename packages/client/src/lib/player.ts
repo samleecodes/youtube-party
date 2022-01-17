@@ -1,7 +1,11 @@
 class YouTubePlayer {
     private _player: YT.Player | undefined;
 
-    public initialise(videoId: string, onReady: () => void, onStateChange: (event: any) => void): void {
+    public initialise(
+        videoId: string,
+        onReady: () => void,
+        onStateChange: (event: YT.PlayerStateChangeEvent) => void
+    ): void {
         // This section was pulled from YouTube docs
         const tag = document.createElement("script");
         tag.src = "https://www.youtube.com/iframe_api";
@@ -25,6 +29,10 @@ class YouTubePlayer {
                 },
             });
         };
+    }
+
+    public getCurrentTime(): number {
+        return this._player?.getCurrentTime() || 0;
     }
 
     public playVideo(): void {

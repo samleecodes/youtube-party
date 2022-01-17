@@ -1,11 +1,7 @@
 import { Component } from "solid-js";
+import { createRoom, joinRoom } from "../../bridge";
 
-interface HomeComponentProps {
-    onJoinFormSubmitted: (roomId: string) => void;
-    onCreateButtonClicked: () => void;
-}
-
-const Home: Component<HomeComponentProps> = props => {
+const Home: Component = () => {
     let input: HTMLInputElement | undefined;
 
     function onJoinFormSubmitted(event: Event) {
@@ -15,7 +11,11 @@ const Home: Component<HomeComponentProps> = props => {
             return;
         }
 
-        props.onJoinFormSubmitted(input.value);
+        joinRoom(input.value);
+    }
+
+    function onCreateButtonClicked() {
+        createRoom();
     }
 
     return (
@@ -26,7 +26,7 @@ const Home: Component<HomeComponentProps> = props => {
                     Join
                 </button>
             </form>
-            <button onClick={props.onCreateButtonClicked} className="bg-white">
+            <button onClick={onCreateButtonClicked} className="bg-white">
                 Create Room
             </button>
         </div>
