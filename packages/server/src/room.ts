@@ -14,6 +14,7 @@ class Room {
     public constructor(public roomId: string, videoId: string) {
         this.state = {
             videoId,
+            isPlaying: true,
         };
     }
 

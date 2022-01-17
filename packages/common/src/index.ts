@@ -1,5 +1,6 @@
 export interface RoomState {
     videoId: string;
+    isPlaying: boolean;
 }
 
 export namespace HttpApi {
