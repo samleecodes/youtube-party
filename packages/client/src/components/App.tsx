@@ -25,6 +25,10 @@ const App: Component = () => {
         wsClient.connect(roomId(), onConnect, onClose);
     }
 
+    /**
+     * Initialise the YouTube player after successful
+     * connection.
+     */
     function onConnect() {
         // Must make sure the Play component
         // is visible when this is called
@@ -35,6 +39,11 @@ const App: Component = () => {
         );
     }
 
+    /**
+     * The nature of how the YouTube iFrame API works
+     * means that a reload is required everytime the user
+     * leaves a room.
+     */
     function onClose() {
         window.location.reload();
     }
