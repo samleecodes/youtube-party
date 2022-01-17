@@ -38,6 +38,15 @@ function onConnect(): void {
     );
 }
 
+function onStateUpdate(): void {
+    youTubePlayer.seekTo(wsClient.getState().playbackProgress);
+    if (wsClient.getState().isPlaying) {
+        youTubePlayer.playVideo();
+    } else {
+        youTubePlayer.pauseVideo();
+    }
+}
+
 function onClose(): void {
     // window.location.reload();
 }
@@ -48,14 +57,14 @@ export async function createRoom(): Promise<void> {
     setRoomIdUi(roomId);
     setShowPlayer(true);
 
-    wsClient.connect(roomId, onConnect, onClose);
+    wsClient.connect(roomId, onConnect, onStateUpdate, onClose);
 }
 
 export async function joinRoom(roomId: string): Promise<void> {
     setRoomIdUi(roomId);
     setShowPlayer(true);
 
-    wsClient.connect(roomId, onConnect, onClose);
+    wsClient.connect(roomId, onConnect, onStateUpdate, onClose);
 }
 
 export function getWsState(): RoomState {

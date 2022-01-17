@@ -20,11 +20,19 @@ class WsClient {
 
     private onConnectCallback: (() => void) | undefined;
 
+    private onStateUpdateCallback: (() => void) | undefined;
+
     private onCloseCallback: (() => void) | undefined;
 
-    public connect(roomId: string, onConnect: () => void, onClose: () => void): void {
+    public connect(
+        roomId: string,
+        onConnect: () => void,
+        onStateUpdateCallback: () => void,
+        onClose: () => void
+    ): void {
         this.roomId = roomId;
         this.onConnectCallback = onConnect;
+        this.onStateUpdateCallback = onStateUpdateCallback;
         this.onCloseCallback = onClose;
 
         this.ws = new WebSocket(this.baseUrl);
@@ -103,6 +111,9 @@ class WsClient {
         if (stateUpdate.state) {
             console.log(stateUpdate.state);
             this.state = stateUpdate.state;
+            if (this.onStateUpdateCallback) {
+                this.onStateUpdateCallback();
+            }
         }
 
         if (!this.isConnected) {

@@ -44,6 +44,10 @@ class YouTubePlayer {
         this.player?.playVideo();
     }
 
+    public pauseVideo(): void {
+        this.player?.pauseVideo();
+    }
+
     public seekTo(seconds: number) {
         this.player?.seekTo(seconds, true);
     }
