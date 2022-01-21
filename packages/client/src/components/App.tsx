@@ -14,21 +14,19 @@ const App: Component = () => {
     }
 
     return (
-        <div>
-            <Show when={showPlayer()} fallback={<Home />}>
-                <Play />
-                <div className="fixed top-0 right-0 mt-[80px] text-white bg-black">Room ID: {roomIdUi()}</div>
-                <div className="fixed top-0 right-0 mt-[100px] text-white bg-black">Last: {lastActionUi()}</div>
-                <div className="fixed top-0 right-0 mt-[120px] text-white bg-black">
-                    <span>
-                        <input class="text-black" ref={videoIdInput} placeholder="Video ID" />
-                        <span onClick={onChangeButtonClicked} className="text-blue-500 cursor-pointer">
-                            Change
-                        </span>
+        <Show when={showPlayer()} fallback={<Home />}>
+            <Play />
+            <div className="fixed top-0 right-0 mt-[80px] mx-2 p-2 rounded-md flex flex-col items-end text-right text-white bg-black bg-opacity-50">
+                <div>Room ID: {roomIdUi()}</div>
+                {/* <div className="fixed top-0 right-0 mt-[100px] text-right text-white bg-black">Last: {lastActionUi()}</div> */}
+                <div>
+                    <input class="p-1 text-white bg-black rounded-md bg-opacity-50" ref={videoIdInput} placeholder="Video ID" />
+                    <span onClick={onChangeButtonClicked} className="ml-2 text-blue-500 cursor-pointer">
+                        Change
                     </span>
                 </div>
-            </Show>
-        </div>
+            </div>
+        </Show>
     );
 };
 
