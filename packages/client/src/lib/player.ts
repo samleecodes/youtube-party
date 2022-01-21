@@ -31,8 +31,6 @@ class YouTubePlayer {
             });
         };
 
-        console.log(onStateChange);
-
         requestAnimationFrame(() => {
             this.renderLoop(onPlayerPlaybackProgressUpdate);
         });
@@ -40,6 +38,11 @@ class YouTubePlayer {
 
     public getCurrentTime(): number {
         return this.player?.getCurrentTime() || 0;
+    }
+
+    public setVideoId(videoId: string) {
+        this.player?.pauseVideo();
+        this.player?.cueVideoById(videoId, 0);
     }
 
     public playVideo(): void {

@@ -7,6 +7,7 @@ declare global {
         class Player {
             constructor(elementId: string, config: any);
             loadVideoById(videoId: string, startSeconds: number): void;
+            cueVideoById(videoId: string, startSeconds: number): void;
             playVideo(): void;
             pauseVideo(): void;
             seekTo(seconds: number, allowSeekAhead: boolean): void;

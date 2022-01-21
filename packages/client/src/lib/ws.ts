@@ -22,13 +22,13 @@ class WsClient {
     private baseUrl = import.meta.env.VITE_WS_BASE_URL || "ws://localhost:8080";
 
     private onConnectCallback: (() => void) | undefined;
-    private onStateUpdateCallback: (() => void) | undefined;
+    private onStateUpdateCallback: ((changedVideo: boolean) => void) | undefined;
     private onCloseCallback: (() => void) | undefined;
 
     public connect(
         roomId: string,
         onConnect: () => void,
-        onStateUpdateCallback: () => void,
+        onStateUpdateCallback: (changedVideo: boolean) => void,
         onClose: () => void
     ): void {
         this.roomId = roomId;
@@ -64,6 +64,14 @@ class WsClient {
         this.state.action.user = "user";
         this.state.action.isPlay = isPlaying;
         this.state.action.at = this.localPlaybackProgress;
+        this.sendUpdateToServer();
+    }
+
+    public setVideoId(videoId: string): void {
+        this.state.videoId = videoId;
+        this.state.action.user = "user";
+        this.state.action.isPlay = false;
+        this.state.action.at = 0;
         this.sendUpdateToServer();
     }
 
@@ -105,15 +113,14 @@ class WsClient {
 
         const update: WsApi.UpdatePacket = JSON.parse(event.data);
 
-        // if (stateUpdate.updateRequest) {
-        //     this.sendUpdateToServer();
-        //     return;
-        // }
-
         if (update.state) {
+            let changedVideo = false;
+            if (this.state.videoId !== update.state.videoId) {
+                changedVideo = true;
+            }
             this.state = update.state;
             if (this.onStateUpdateCallback) {
-                this.onStateUpdateCallback();
+                this.onStateUpdateCallback(changedVideo);
             }
         }
 

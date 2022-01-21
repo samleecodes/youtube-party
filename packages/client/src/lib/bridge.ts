@@ -4,13 +4,15 @@ import { youTubePlayer } from "./player";
 import { wsClient } from "./ws";
 
 // Reactive state variables for UI rendering use only
-export const [lastActionUi, setLastActionUi] = createSignal<string>("null");
 export const [roomIdUi, setRoomIdUi] = createSignal<string>("");
+export const [lastActionUi, setLastActionUi] = createSignal<string>("");
 export const [showPlayer, setShowPlayer] = createSignal<boolean>(false);
 
 class Bridge {
-    public async createRoom(): Promise<void> {
-        const roomId = await httpApiClient.createRoom();
+    private lastVideoId: string = "";
+
+    public async createRoom(videoId: string): Promise<void> {
+        const roomId = await httpApiClient.createRoom(videoId);
         setRoomIdUi(roomId);
         setShowPlayer(true);
         wsClient.connect(roomId, this.onWsConnect.bind(this), this.onWsUpdate.bind(this), this.onWsClose.bind(this));
@@ -22,8 +24,13 @@ class Bridge {
         wsClient.connect(roomId, this.onWsConnect.bind(this), this.onWsUpdate.bind(this), this.onWsClose.bind(this));
     }
 
+    public changeVideo(videoId: string): void {
+        youTubePlayer.setVideoId(videoId);
+        wsClient.setVideoId(videoId);
+    }
+
     private onPlayerReady(): void {
-        this.onWsUpdate(); // Manually trigger the routine to sync player with state
+        this.onWsUpdate(false); // Manually trigger the routine to sync player with state
     }
 
     private onPlayerStateUpdate(event: YT.PlayerStateChangeEvent): void {
@@ -55,8 +62,12 @@ class Bridge {
         );
     }
 
-    private onWsUpdate(): void {
+    private onWsUpdate(changedVideo: boolean): void {
         const state = wsClient.getState();
+        if (changedVideo) {
+            youTubePlayer.setVideoId(state.videoId);
+            return;
+        }
         youTubePlayer.seekTo(state.action.at);
         state.action.isPlay ? youTubePlayer.playVideo() : youTubePlayer.pauseVideo();
         const str = `${state.action.user} ${state.action.isPlay ? "play" : "pause"} ${state.action.at}`;

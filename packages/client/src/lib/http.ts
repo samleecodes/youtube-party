@@ -4,10 +4,10 @@ import { HttpApi } from "common";
 class HttpApiClient {
     private baseUrl = import.meta.env.VITE_HTTP_BASE_URL || "http://localhost:8080";
 
-    public async createRoom(): Promise<string> {
+    public async createRoom(videoId: string): Promise<string> {
         const url = this.constructUrl(HttpApi.CreateRoom.route);
         const payload: HttpApi.CreateRoom.RequestSchema = {
-            videoId: "goHokEUdiyY",
+            videoId,
         };
 
         const response = await axios.post(url, payload);
