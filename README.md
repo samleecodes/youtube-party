@@ -19,3 +19,13 @@ All the sub-packages are stored inside the `packages` folder. As of now, the pro
 The client-side web app is a [SolidJS](https://www.solidjs.com) client built with [Vite](https://vitejs.dev). The server-side web app is a [Fastify](https://www.fastify.io) [Node](https://nodejs.dev) app built with [tsc](https://www.typescriptlang.org/docs/handbook/compiler-options.html). The common package exposes interfaces and types which are used by both the client and the server.
 
 The entire project is built with TypeScript and follows the [Google Typescript Style Guide](https://google.github.io/styleguide/tsguide.html) enforced with the [gts](https://www.npmjs.com/package/gts) npm module.
+
+## Usage
+
+![Screenshot of the home page](assets/homepage.png)
+
+When launching the app, you'll be directed to home page where you'll be prompted to either enter a room ID to join or a video ID to create a room with.
+
+![Screenshot of an active session](assets/player.png)
+
+Any actions (Play/Pause/Seek) by party members will be replicated for every other member. The Room ID will be displayed in the overlay UI and can be copied and sent to others. Additionally, there is a field in the overlay UI that can be used to change the current video.
