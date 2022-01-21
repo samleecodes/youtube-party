@@ -74,7 +74,9 @@ class Bridge {
         setLastActionUi(str);
     }
 
-    private onWsClose(): void {}
+    private onWsClose(): void {
+        window.location.reload();
+    }
 }
 
 export const bridge = new Bridge();
