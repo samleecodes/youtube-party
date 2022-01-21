@@ -29,3 +29,19 @@ When launching the app, you'll be directed to home page where you'll be prompted
 ![Screenshot of an active session](assets/player.png)
 
 Any actions (Play/Pause/Seek) by party members will be replicated for every other member. The Room ID will be displayed in the overlay UI and can be copied and sent to others. Additionally, there is a field in the overlay UI that can be used to change the current video.
+
+## Development Progress
+
+The high-level architecture of the system is mostly complete. What's left to do is to stomp some bugs and implement QoL and convenience features. Including but not limited to:
+
+- Paste URLs as well as video IDs
+- Sharable party links
+- Notifications
+- Desync check
+- Browse videos in-app
+- Chat
+- Discord integration
+
+An effort to document and refactor some aspects of the codebase is also incoming.
+
+From the perspective of the developer, I am not a 100% sure as to what the endgoal with this app is, but we'll see. :)
