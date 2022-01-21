@@ -10,18 +10,18 @@ class Room {
     private clients: { [uId: string]: WebSocket } = {};
 
     private state: RoomState;
+    private lastUpdate: number;
 
     public constructor(public roomId: string, videoId: string) {
         this.state = {
             videoId,
             action: {
-                user: "Server",
+                user: "server",
                 isPlay: false,
                 at: 0,
             },
-            isPlaying: true,
-            playbackProgress: 0,
         };
+        this.lastUpdate = Date.now();
     }
 
     /**
@@ -47,8 +47,9 @@ class Room {
 
         ws.send(JSON.stringify(handshake));
 
-        this.getUpdatedState([uId]);
-        // this.broadcastState();
+        // this.getUpdatedState([uId]);
+        this.state.action.isPlay = false;
+        this.broadcastState([]);
     }
 
     private getUpdatedState(exceptUIds: string[]): void {
@@ -70,11 +71,18 @@ class Room {
     }
 
     private broadcastState(exceptUIds: string[]): void {
-        const stateUpdate: WsApi.UpdatePacket = {
+        if (this.state.action.isPlay) {
+            const desync = Date.now() - this.lastUpdate;
+            if (desync > 1000) {
+                this.state.action.at = desync / 1000 + this.state.action.at;
+            }
+        }
+
+        const update: WsApi.UpdatePacket = {
             state: this.state,
             updateRequest: false,
         };
-        const payload = JSON.stringify(stateUpdate);
+        const payload = JSON.stringify(update);
 
         const uIds = Object.keys(this.clients).filter(val => {
             return !exceptUIds.includes(val);
@@ -85,8 +93,10 @@ class Room {
     }
 
     private onWsMessage(uId: string, data: RawData): void {
+        console.log(data);
         const stateUpdate: WsApi.UpdatePacket = JSON.parse(String(data));
         this.state = stateUpdate.state;
+        this.lastUpdate = Date.now();
         this.broadcastState([uId]);
     }
 

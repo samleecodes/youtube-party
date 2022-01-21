@@ -13,13 +13,13 @@ class Bridge {
         const roomId = await httpApiClient.createRoom();
         setRoomIdUi(roomId);
         setShowPlayer(true);
-        wsClient.connect(roomId, this.onWsConnect, this.onWsUpdate, this.onWsClose);
+        wsClient.connect(roomId, this.onWsConnect.bind(this), this.onWsUpdate.bind(this), this.onWsClose.bind(this));
     }
 
     public async joinRoom(roomId: string): Promise<void> {
         setRoomIdUi(roomId);
         setShowPlayer(true);
-        wsClient.connect(roomId, this.onWsConnect, this.onWsUpdate, this.onWsClose);
+        wsClient.connect(roomId, this.onWsConnect.bind(this), this.onWsUpdate.bind(this), this.onWsClose.bind(this));
     }
 
     private onPlayerReady(): void {
@@ -29,6 +29,7 @@ class Bridge {
     private onPlayerStateUpdate(event: YT.PlayerStateChangeEvent): void {
         // Run diff check against network state
         // The diff check will determine whether to send out an update
+        console.log(event);
         const state = wsClient.getState();
         if (event.data === 0 || event.data === 2) {
             if (state.action.isPlay) {
@@ -43,20 +44,23 @@ class Bridge {
     }
 
     private onPlayerPlaybackProgressUpdate(playbackProgress: number): void {
+        console.log(playbackProgress);
         wsClient.setPlaybackProgress(playbackProgress);
     }
 
     private onWsConnect(): void {
+        console.log("WS Connect", this.onPlayerStateUpdate);
         youTubePlayer.initialise(
             wsClient.getState().videoId,
-            this.onPlayerReady,
-            this.onPlayerStateUpdate,
-            this.onPlayerPlaybackProgressUpdate
+            this.onPlayerReady.bind(this),
+            this.onPlayerStateUpdate.bind(this),
+            this.onPlayerPlaybackProgressUpdate.bind(this)
         );
     }
 
     private onWsUpdate(): void {
         const state = wsClient.getState();
+        console.log(state);
         youTubePlayer.seekTo(state.action.at);
         state.action.isPlay ? youTubePlayer.playVideo() : youTubePlayer.pauseVideo();
         const str = `${state.action.user} ${state.action.isPlay ? "play" : "pause"} ${state.action.at}`;

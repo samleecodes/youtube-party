@@ -31,6 +31,8 @@ class YouTubePlayer {
             });
         };
 
+        console.log(onStateChange);
+
         requestAnimationFrame(() => {
             this.renderLoop(onPlayerPlaybackProgressUpdate);
         });
