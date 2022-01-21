@@ -55,6 +55,7 @@ const Home: Component = () => {
                     Create Room
                 </button>
             </form>
+            <a href="https://github.com/niazmsameer/youtube-party" class="my-2 text-blue-500">GitHub Repository</a>
         </div>
     );
 };
