@@ -22,16 +22,22 @@ const Home: Component = () => {
     }
 
     return (
-        <div className="w-screen h-screen flex flex-col justify-center items-center bg-black">
-            <form onSubmit={onJoinFormSubmitted} className="flex flex-col items-center">
-                <input ref={joinInput} placeholder="Room ID" type="text" />
-                <button className="bg-white" type="submit">
+        <div class="w-screen h-screen flex flex-col justify-center items-center bg-black">
+            <div class="text-3xl text-white">
+                YouTube Party <span class="text-sm">alpha</span>
+            </div>
+            <div class="mb-2 text-lg text-white">
+                with &lt;3 by Sameer Niaz
+            </div>
+            <form onSubmit={onJoinFormSubmitted} class="flex flex-row items-center my-2">
+                <input ref={joinInput} class="px-2 py-1 rounded-md" placeholder="Room ID" type="text" />
+                <button class="mx-2 px-2 py-1 rounded-md bg-white" type="submit">
                     Join
                 </button>
             </form>
-            <form onSubmit={onCreateFormSubmitted} className="flex flex-col items-center">
-                <input ref={createInput} placeholder="Video ID" type="text" />
-                <button className="bg-white" type="submit">
+            <form onSubmit={onCreateFormSubmitted} class="flex flex-row items-center my-2">
+                <input ref={createInput} class="px-2 py-1 rounded-md" placeholder="Video ID" type="text" />
+                <button class="mx-2 px-2 py-1 rounded-md bg-white" type="submit">
                     Create Room
                 </button>
             </form>
