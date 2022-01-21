@@ -48,8 +48,7 @@ class Room {
         ws.send(JSON.stringify(handshake));
 
         // this.getUpdatedState([uId]);
-        this.state.action.isPlay = false;
-        this.broadcastState([]);
+        this.broadcastState([], true);
     }
 
     private getUpdatedState(exceptUIds: string[]): void {
@@ -70,12 +69,16 @@ class Room {
         ws.send(JSON.stringify(stateUpdate));
     }
 
-    private broadcastState(exceptUIds: string[]): void {
+    private broadcastState(exceptUIds: string[], pause?: boolean): void {
         if (this.state.action.isPlay) {
             const desync = Date.now() - this.lastUpdate;
             if (desync > 1000) {
                 this.state.action.at = desync / 1000 + this.state.action.at;
             }
+        }
+
+        if (pause) {
+            this.state.action.isPlay = false;
         }
 
         const update: WsApi.UpdatePacket = {
@@ -93,7 +96,6 @@ class Room {
     }
 
     private onWsMessage(uId: string, data: RawData): void {
-        console.log(data);
         const stateUpdate: WsApi.UpdatePacket = JSON.parse(String(data));
         this.state = stateUpdate.state;
         this.lastUpdate = Date.now();
