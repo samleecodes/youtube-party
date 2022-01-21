@@ -1,6 +1,7 @@
 export interface RoomState {
     videoId: string;
     action: {
+        user: string;
         isPlay: boolean;
         at: number;
     };
