@@ -5,8 +5,11 @@ class WsClient {
 
     private state: RoomState = {
         videoId: "",
-        isPlaying: false,
-        playbackProgress: 0,
+        action: {
+            user: "",
+            isPlay: false,
+            at: 0,
+        },
     };
 
     private localPlaybackProgress = 0;
@@ -19,9 +22,7 @@ class WsClient {
     private baseUrl = import.meta.env.VITE_WS_BASE_URL || "ws://localhost:8080";
 
     private onConnectCallback: (() => void) | undefined;
-
     private onStateUpdateCallback: (() => void) | undefined;
-
     private onCloseCallback: (() => void) | undefined;
 
     public connect(
@@ -60,17 +61,18 @@ class WsClient {
     }
 
     public setIsPlaying(isPlaying: boolean): void {
-        this.state.isPlaying = isPlaying;
-        this.updateStateToServer();
+        this.state.action.user = "user";
+        this.state.action.isPlay = isPlaying;
+        this.state.action.at = this.localPlaybackProgress;
+        this.sendUpdateToServer();
     }
 
-    private updateStateToServer(): void {
-        this.state.playbackProgress = this.localPlaybackProgress;
-        const stateRequestReply: WsApi.StateUpdatePacket = {
+    private sendUpdateToServer(): void {
+        const update: WsApi.UpdatePacket = {
             state: this.state,
             updateRequest: false,
         };
-        this.ws?.send(JSON.stringify(stateRequestReply));
+        this.ws?.send(JSON.stringify(update));
     }
 
     private onWsOpen(): void {
@@ -97,20 +99,19 @@ class WsClient {
                 return;
             }
 
-            this.hasHandshaken = true;
+            this.hasHandshaken = true; // For now we'll only set handshake, we'll set connected when we get first state
             return;
         }
 
-        const stateUpdate: WsApi.StateUpdatePacket = JSON.parse(event.data);
+        const update: WsApi.UpdatePacket = JSON.parse(event.data);
 
-        if (stateUpdate.updateRequest) {
-            this.updateStateToServer();
-            return;
-        }
+        // if (stateUpdate.updateRequest) {
+        //     this.sendUpdateToServer();
+        //     return;
+        // }
 
-        if (stateUpdate.state) {
-            console.log(stateUpdate.state);
-            this.state = stateUpdate.state;
+        if (update.state) {
+            this.state = update.state;
             if (this.onStateUpdateCallback) {
                 this.onStateUpdateCallback();
             }

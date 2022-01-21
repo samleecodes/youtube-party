@@ -1,21 +1,19 @@
 import { Component } from "solid-js";
-import { createRoom, joinRoom } from "../../bridge";
+import { bridge } from "../../lib/bridge";
 
 const Home: Component = () => {
     let input: HTMLInputElement | undefined;
 
     function onJoinFormSubmitted(event: Event) {
         event.preventDefault();
-
         if (!input?.value || input.value === "") {
             return;
         }
-
-        joinRoom(input.value);
+        bridge.joinRoom(input.value);
     }
 
     function onCreateButtonClicked() {
-        createRoom();
+        bridge.createRoom();
     }
 
     return (

@@ -5,8 +5,6 @@ export interface RoomState {
         isPlay: boolean;
         at: number;
     };
-    isPlaying: boolean;
-    playbackProgress: number;
 }
 
 export namespace HttpApi {
