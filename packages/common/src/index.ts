@@ -33,7 +33,7 @@ export namespace WsApi {
         auth: boolean;
     }
 
-    export interface StateUpdatePacket {
+    export interface UpdatePacket {
         state: RoomState;
         updateRequest: boolean;
     }

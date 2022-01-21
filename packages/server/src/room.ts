@@ -14,6 +14,11 @@ class Room {
     public constructor(public roomId: string, videoId: string) {
         this.state = {
             videoId,
+            action: {
+                user: "Server",
+                isPlay: false,
+                at: 0,
+            },
             isPlaying: true,
             playbackProgress: 0,
         };
@@ -57,7 +62,7 @@ class Room {
         }
 
         const ws = this.clients[uIds[0]];
-        const stateUpdate: WsApi.StateUpdatePacket = {
+        const stateUpdate: WsApi.UpdatePacket = {
             state: this.state,
             updateRequest: true,
         };
@@ -65,7 +70,7 @@ class Room {
     }
 
     private broadcastState(exceptUIds: string[]): void {
-        const stateUpdate: WsApi.StateUpdatePacket = {
+        const stateUpdate: WsApi.UpdatePacket = {
             state: this.state,
             updateRequest: false,
         };
@@ -80,7 +85,7 @@ class Room {
     }
 
     private onWsMessage(uId: string, data: RawData): void {
-        const stateUpdate: WsApi.StateUpdatePacket = JSON.parse(String(data));
+        const stateUpdate: WsApi.UpdatePacket = JSON.parse(String(data));
         this.state = stateUpdate.state;
         this.broadcastState([uId]);
     }
