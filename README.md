@@ -1,3 +1,4 @@
+# THE DEPLOYMENT AT YT.SAMEERNIAZ.COM IS OFFLINE.
 # YouTube Party
 
 YouTube Party is a real-time web application allowing multiple users to watch YouTube videos together with the playback synchronised across all the users' devices.
